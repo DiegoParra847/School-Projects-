@@ -1,5 +1,6 @@
-#america yaa!!!
+# you need to connected to the internet and have a partition layout set, this can be done by using the iwctl and cfdisk/fdisk utils respectivly. 
 
+#storing user input to be used as arguments for other commands later. 
 read -p "Enter usr name: " usr
 read -p "Enter passwd: " passwd
 read -p "Enter root passwd: " root
@@ -25,13 +26,15 @@ mount /dev/sda1 /mnt/boot/efi
 swapon /dev/sda2 
 mount /dev/sda3 /mnt
 
-#installing base packages, fastfetch is not nessicary, 
-#grub can be switched out with a diffrent bootloader if disired 
-
+#installing base packages, fastfetch is not nessicary.
 echo "-------------------------"
 echo "-INSTALLING BASE SYSTEM--"
 echo "-------------------------"
 pacstrap /mnt base linux linux-firmware sudo nano grub fastfetch networkmanager efibootmgr sof-firmware base-devel -y
+
+# keyring set up, keyring needs to be initalized and populated for software to install post instalation. 
+pacman-key --init 
+pacman-key --populate
 
 #genfstab
 genfstab /mnt > /mnt/etc/fstab
@@ -45,7 +48,7 @@ passwd $root
 # adds user to the wheel group 
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-#locale config will only work if you use the UTF-8 local 
+#locale config will only work if you use the UTF-8 local, and are in CST.
 echo "-------------------------"
 echo "---CONFIGUREING LOCALE---"
 echo "-------------------------"
@@ -54,7 +57,7 @@ ln -sf /usr/share/zoneinfo/America/Chicago /etc/localetime
 hwclock --systohc 
 echo "LANG=en_US.UTF-8" >> /etc/locale.conf
 
-#Installing grub bootloader remeber that this can be swaped for another bootloader.
+#Installing grub bootloader. 
 grub-install /dev/sda 
 grub-mkconfig -o /boot/grub/grub.cfg
 
