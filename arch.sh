@@ -1,3 +1,4 @@
+#!/bin/bash
 # you need to connected to the internet and have a partition layout set, this can be done by using the iwctl and cfdisk/fdisk utils respectivly. 
 
 #storing user input to be used as arguments for other commands later. 
