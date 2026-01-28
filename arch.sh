@@ -2,17 +2,17 @@
 # you need to connected to the internet and have a partition layout set, this can be done by using the iwctl and cfdisk/fdisk utils respectivly. 
 
 #storing user input to be used as arguments for other commands later. 
-read -p "Enter usr name: " usr
-read -p "Enter passwd: " passwd
-read -p "Enter root passwd: " root
-read -p "Enter hostname: " hstnm
+read -p "Enter user name: " usr
+read -p "Enter password for this user : " pass
+read -p "Enter root password: " root
+read -p "Enter system hostname: " host
 
 # make filesystems, this wont work if you have multiple drives or an nvme installed
 echo "-------------------------"
 echo "--CREATING FILE SYSTEMS--"
 echo "-------------------------"
 
-mkfs.fat -F -32 /dev/sda1 
+mkfs.fat -F 32 /dev/sda1 
 mkswap /dev/sda2
 mkfs.ext4 /dev/sda3
 mkdir -p /mnt/boot/efi
@@ -41,12 +41,12 @@ pacman-key --populate
 genfstab /mnt > /mnt/etc/fstab
 
 #add usr 
-usradd -m -G wheel -s /bin/bash $usr
-echo $hstnm >> /etc/hostname
-passwd $usr $passwd
-passwd $root
+useradd -m -G wheel -s /bin/bash $usr
+echo $host >> /etc/hostname
+echo "$root" | passwd
+echo "$usr:$pass" | chpasswd
 
-# adds user to the wheel group 
+# configures wheel group 
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
 #locale config will only work if you use the UTF-8 local, and are in CST.
